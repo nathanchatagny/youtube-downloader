@@ -1,4 +1,5 @@
 import yt_dlp
+import os
 
 def afficher_progression(progress):
     """
@@ -16,42 +17,43 @@ def afficher_progression(progress):
 
 def telecharger_video(url, chemin_destination="."):
     """
-    Télécharge une vidéo depuis YouTube à l'aide de yt-dlp, sans fusionner les flux vidéo et audio.
-    
+    Télécharge une vidéo depuis YouTube à l'aide de yt-dlp.
+
     Paramètres:
     - url (str) : URL de la vidéo YouTube à télécharger.
-    - chemin_destination (str) : Dossier de destination pour enregistrer la vidéo.
-    
+    - chemin_destination (str) : Dossier de destination.
+
     Retourne : Aucun, mais affiche des messages de statut.
     """
     try:
-        # Options de téléchargement sans fusionner les flux vidéo et audio
+        # Vérifier si le dossier de destination existe
+        if not os.path.exists(chemin_destination):
+            os.makedirs(chemin_destination)
+
         options = {
-            "format": "best",  # Télécharge la meilleure qualité vidéo disponible (avec audio intégré)
-            "outtmpl": f"{chemin_destination}/%(title)s.%(ext)s",  # Définir le modèle de nom pour le fichier téléchargé
-            "progress_hooks": [afficher_progression],  # Afficher la progression pendant le téléchargement
-            "noplaylist": True,  # Ne pas télécharger les vidéos d'une playlist
+            "format": "bv*+ba/best",  # Meilleur format vidéo + audio
+            "outtmpl": os.path.join(chemin_destination, "%(title)s.%(ext)s"),
+            "progress_hooks": [afficher_progression],
+            "noplaylist": True,
+            "nocheckcertificate": True,  # Évite les erreurs SSL
         }
 
-        # Initialisation de yt-dlp et téléchargement
         with yt_dlp.YoutubeDL(options) as ydl:
-            print(f"Début du téléchargement de la vidéo depuis : {url}")
+            print(f"Début du téléchargement de : {url}")
             ydl.download([url])
-            print(f"Téléchargement terminé ! La vidéo est enregistrée dans : {chemin_destination}")
+            print(f"Téléchargement terminé ! Vidéo enregistrée dans : {chemin_destination}")
     
     except Exception as e:
-        print(f"Une erreur s'est produite lors du téléchargement : {e}")
+        print(f"❌ Erreur lors du téléchargement : {e}")
 
 if __name__ == "__main__":
-    # Demander à l'utilisateur l'URL de la vidéo et le dossier de destination
     url_video = input("Entrez l'URL de la vidéo YouTube : ").strip()
     chemin = input("Entrez le chemin de destination (laisser vide pour le dossier actuel) : ").strip() or "."
 
-    # Vérification de l'URL
     if not url_video:
-        print("L'URL de la vidéo ne peut pas être vide.")
+        print("L'URL ne peut pas être vide.")
     else:
-        # Lancer le téléchargement
         telecharger_video(url_video, chemin)
 
-#//Users/nathanchatagny/Desktop/Code/youtube-downloader
+#/Users/nathanchatagny/Desktop/Code/youtube-downloader
+#python3 -m yt_dlp "https://www.youtube.com/watch?v=48egIgP27W4"
