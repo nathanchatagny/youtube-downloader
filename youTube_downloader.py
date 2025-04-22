@@ -55,5 +55,5 @@ if __name__ == "__main__":
     else:
         telecharger_video(url_video, chemin)
 
-#/Users/nathanchatagny/Desktop/Code/youtube-downloader
+#/Users/nathanchatagny/Desktop/Code/youTube_downloader
 #python3 -m yt_dlp "https://www.youtube.com/watch?v=48egIgP27W4"
